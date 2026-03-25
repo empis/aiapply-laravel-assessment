@@ -44,51 +44,44 @@ Complete in order. Prioritize quality over quantity.
 
 Add the ability to filter and search tasks on the task list page.
 
-**Requirements:**
+**Done when:**
 
-- Add a status filter dropdown (All / To Do / In Progress / Done)
-- Add a search input that filters tasks by name
-- Filtering should work on the API level (not just frontend)
-- Both filters should work together
+- User can filter tasks by status (All / To Do / In Progress / Done)
+- User can search tasks by name
+- Filters work server-side, not just in the browser
+- Status filter and search work together
 
 #### 🟡 Task 2: Comments Feature (Medium)
 
 Add a comments system to tasks.
 
-**Requirements:**
+**Done when:**
 
-- Create a `comments` table (migration) with: body, user_id, task_id, timestamps
-- Create Comment model with relationships
-- API endpoints: list comments for a task, add a comment
-- Vue component showing comments on the task detail page
-- Form to add new comments
-- Validation on both backend and frontend (body is required, max 1000 chars)
+- Users can leave comments on a task
+- Comments are visible on the task detail page with author and timestamp
+- Comment body is validated (required, reasonable max length)
+- Validation errors are shown to the user
+- Full stack: database, backend, and frontend all implemented
 
 #### 🔴 Task 3: Real-time Notifications (Hard)
 
-Add real-time notifications when someone adds a comment to a task.
+Add real-time notifications when someone comments on a task.
 
-**Requirements:**
+**Done when:**
 
-- Set up Laravel Broadcasting (Pusher or Laravel Reverb)
-- Create an event when a comment is created
-- Listen for the event on the frontend
-- Show a notification/toast when a new comment appears
-- Auto-append the new comment without page refresh
+- When a comment is added, other users see a notification without refreshing the page
+- The new comment appears automatically in the comment list
+- The notification is visible and informative (who commented, on which task)
 
 #### 🌟 Bonus: Activity Log
 
 If you finish the tasks above and still have time, add an activity log to tasks.
 
-**Requirements:**
+**Done when:**
 
-- Create an `activity_logs` table: action (string), description (text), user_id, subject_type, subject_id (polymorphic), timestamps
-- Create ActivityLog model with polymorphic `subject` relationship
-- Automatically log events using Model Observers:
-  - Task created / updated / deleted
-  - Comment added (if you built Task 2)
-- API endpoint: get activity log for a task
-- Vue component: timeline/feed on the task detail page showing the history
+- Important events are logged automatically (task created, updated, deleted, comment added)
+- The task detail page shows a timeline/history of what happened
+- The log captures who did what and when
 
 This is NOT expected — it's a bonus for candidates who move fast. Don't attempt it before completing the main tasks.
 
