@@ -13,9 +13,17 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        return response()->json(
-            $request->user()->tasks()->latest()->get()
-        );
+        $query = $request->user()->tasks()->latest();
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        return response()->json($query->get());
     }
 
     /**

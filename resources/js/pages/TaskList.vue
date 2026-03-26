@@ -16,6 +16,9 @@
       </div>
     </div>
 
+    <!-- Filters -->
+    <TaskFilter v-model:name="filterName" v-model:status="filterStatus" />
+
     <!-- Loading state -->
     <div v-if="loading" class="mt-10 flex justify-center">
       <div class="text-gray-400 text-sm">Loading tasks…</div>
@@ -98,18 +101,24 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '../composables/useApi.js';
+import TaskFilter from '../components/TaskFilter.vue';
 
 const router = useRouter();
 const tasks = ref([]);
 const loading = ref(true);
+const filterName = ref('');
+const filterStatus = ref('');
 
 const fetchTasks = async () => {
   loading.value = true;
   try {
-    const response = await api.get('/tasks');
+    const params = {};
+    if (filterName.value) params.name = filterName.value;
+    if (filterStatus.value) params.status = filterStatus.value;
+    const response = await api.get('/tasks', { params });
     tasks.value = response.data;
   } catch (err) {
     console.error('Failed to fetch tasks:', err);
@@ -117,6 +126,15 @@ const fetchTasks = async () => {
     loading.value = false;
   }
 };
+
+let debounceTimer = null;
+
+watch(filterName, () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(fetchTasks, 400);
+});
+
+watch(filterStatus, fetchTasks);
 
 const deleteTask = async (id) => {
   if (!confirm('Delete this task? This cannot be undone.')) return;
