@@ -82,13 +82,7 @@
         </div>
       </div>
 
-      <!-- Comments placeholder -->
-      <div class="mt-6 bg-white rounded-xl shadow-sm border border-dashed border-gray-300 p-6">
-        <h2 class="text-lg font-semibold text-gray-800 mb-2">Comments</h2>
-        <p class="text-gray-400 text-sm italic">
-          💬 Comments feature is not implemented yet — this is one of the assessment tasks for you to build!
-        </p>
-      </div>
+      <TaskComments :task-id="task.id" />
     </div>
   </div>
 </template>
@@ -98,6 +92,8 @@ import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '../composables/useApi.js';
 import { TaskPriority, TaskStatus } from '../enums/task.js';
+import TaskComments from '../components/TaskComments.vue';
+import { formatDate } from '../utils/date.js';
 
 const route = useRoute();
 const router = useRouter();
@@ -137,10 +133,6 @@ const statusClass = TaskStatus.class;
 const statusLabel = TaskStatus.label;
 const priorityClass = TaskPriority.class;
 
-const formatDate = (dateStr) => {
-  if (!dateStr) return '';
-  return new Date(dateStr).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-};
 
 onMounted(fetchTask);
 </script>

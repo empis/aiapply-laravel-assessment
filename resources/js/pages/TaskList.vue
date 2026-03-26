@@ -106,6 +106,7 @@ import { useRouter } from 'vue-router';
 import api from '../composables/useApi.js';
 import TaskFilter from '../components/TaskFilter.vue';
 import { TaskPriority, TaskStatus } from '../enums/task.js';
+import { formatDate } from '../utils/date.js';
 
 const router = useRouter();
 const tasks = ref([]);
@@ -155,10 +156,6 @@ const statusClass = TaskStatus.class;
 const statusLabel = TaskStatus.label;
 const priorityClass = TaskPriority.class;
 
-const formatDate = (dateStr) => {
-  if (!dateStr) return '';
-  return new Date(dateStr).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-};
 
 const isOverdue = (task) => {
   if (!task.due_date || task.status === 'done') return false;
