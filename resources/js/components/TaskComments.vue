@@ -45,9 +45,11 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import api from '../composables/useApi.js';
 import { formatDate } from '../utils/date.js';
+import { useAuth } from '../composables/useAuth.js';
+import echo from '../echo.js';
 
 const props = defineProps({
   taskId: { type: [Number, String], required: true },
@@ -87,5 +89,24 @@ const submitComment = async () => {
   }
 };
 
-onMounted(fetchComments);
+const { user } = useAuth();
+
+const onCommentCreated = (event) => {
+  if (Number(event.task.id) === Number(props.taskId)) {
+    fetchComments();
+  }
+};
+
+onMounted(() => {
+  fetchComments();
+  if (user.value?.id) {
+    echo.private(`App.Models.User.${user.value.id}`).listen('CommentCreated', onCommentCreated);
+  }
+});
+
+onUnmounted(() => {
+  if (user.value?.id) {
+    echo.private(`App.Models.User.${user.value.id}`).stopListening('CommentCreated', onCommentCreated);
+  }
+});
 </script>

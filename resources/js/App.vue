@@ -62,6 +62,18 @@
       </div>
     </nav>
 
+    <!-- Notification toasts -->
+    <div class="fixed top-4 right-4 z-50 space-y-2 pointer-events-none">
+      <div
+        v-for="notification in notifications"
+        :key="notification.id"
+        class="flex items-start gap-3 bg-white rounded-lg shadow-lg border border-gray-200 p-4 w-80 pointer-events-auto"
+      >
+        <div class="flex-1 text-sm text-gray-700">{{ notification.message }}</div>
+        <button @click="dismiss(notification.id)" class="text-gray-400 hover:text-gray-600 flex-shrink-0 text-xs leading-none mt-0.5">✕</button>
+      </div>
+    </div>
+
     <!-- Main content -->
     <main>
       <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -72,13 +84,45 @@
 </template>
 
 <script setup>
+import { onUnmounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from './composables/useAuth.js';
+import { useNotifications } from './composables/useNotifications.js';
+import echo from './echo.js';
 
 const router = useRouter();
 const { isAuthenticated, user, logout } = useAuth();
+const { notifications, add: addNotification, dismiss } = useNotifications();
+
+let channel = null;
+
+const subscribeToUserChannel = (userId) => {
+  channel = echo.private(`App.Models.User.${userId}`);
+  channel.listen('CommentCreated', (event) => {
+    addNotification(`${event.commenter.name} commented on "${event.task.name}"`);
+  });
+};
+
+const unsubscribeFromUserChannel = () => {
+  if (channel && user.value?.id) {
+    echo.leave(`App.Models.User.${user.value.id}`);
+    channel = null;
+  }
+};
+
+watch(
+  () => user.value?.id,
+  (userId) => {
+    unsubscribeFromUserChannel();
+    if (userId) subscribeToUserChannel(userId);
+  },
+  { immediate: true },
+);
+
+onUnmounted(unsubscribeFromUserChannel);
 
 const handleLogout = async () => {
+  unsubscribeFromUserChannel();
   await logout();
   router.push({ name: 'Login' });
 };

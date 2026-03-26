@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\CommentCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCommentRequest;
 use App\Models\Task;
@@ -31,6 +32,10 @@ class CommentController extends Controller
             'body' => $request->validated()['body'],
         ]);
 
-        return response()->json($comment->load('user:id,name'), 201);
+        $comment->load('user:id,name', 'task:id,name,user_id');
+
+        broadcast(new CommentCreated($comment));
+
+        return response()->json($comment, 201);
     }
 }
