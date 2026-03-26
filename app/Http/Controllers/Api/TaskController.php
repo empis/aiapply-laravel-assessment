@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\TaskPriority;
+use App\Enums\TaskStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class TaskController extends Controller
 {
@@ -15,7 +18,7 @@ class TaskController extends Controller
     {
         $query = $request->user()->tasks()->latest();
 
-        if ($request->filled('status')) {
+        if ($request->filled('status') && TaskStatus::tryFrom($request->status)) {
             $query->where('status', $request->status);
         }
 
@@ -34,8 +37,8 @@ class TaskController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'status' => 'required|in:todo,in_progress,done',
-            'priority' => 'required|in:low,medium,high',
+            'status' => ['required', Rule::enum(TaskStatus::class)],
+            'priority' => ['required', Rule::enum(TaskPriority::class)],
             'due_date' => 'nullable|date',
         ]);
 
@@ -68,8 +71,8 @@ class TaskController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
-            'status' => 'sometimes|required|in:todo,in_progress,done',
-            'priority' => 'sometimes|required|in:low,medium,high',
+            'status' => ['sometimes', 'required', Rule::enum(TaskStatus::class)],
+            'priority' => ['sometimes', 'required', Rule::enum(TaskPriority::class)],
             'due_date' => 'nullable|date',
         ]);
 

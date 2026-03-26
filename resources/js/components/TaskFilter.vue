@@ -16,15 +16,15 @@
         class="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
       >
         <option value="">All Statuses</option>
-        <option value="todo">To Do</option>
-        <option value="in_progress">In Progress</option>
-        <option value="done">Done</option>
+        <option v-for="s in TaskStatus.values" :key="s.value" :value="s.value">{{ s.label }}</option>
       </select>
     </div>
   </div>
 </template>
 
 <script setup>
+import { TaskStatus } from '../enums/task.js';
+
 defineProps({
   name: { type: String, default: '' },
   status: { type: String, default: '' },

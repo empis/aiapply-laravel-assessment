@@ -51,9 +51,7 @@
               v-model="form.status"
               class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white"
             >
-              <option value="todo">To Do</option>
-              <option value="in_progress">In Progress</option>
-              <option value="done">Done</option>
+              <option v-for="s in TaskStatus.values" :key="s.value" :value="s.value">{{ s.label }}</option>
             </select>
           </div>
           <div>
@@ -63,9 +61,7 @@
               v-model="form.priority"
               class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white"
             >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
+              <option v-for="p in TaskPriority.values" :key="p.value" :value="p.value">{{ p.label }}</option>
             </select>
           </div>
         </div>
@@ -112,6 +108,7 @@
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '../composables/useApi.js';
+import { TaskPriority, TaskStatus } from '../enums/task.js';
 
 const router = useRouter();
 

@@ -17,6 +17,19 @@
         }
     </style>
 
+    <script>
+        window.ENUMS = {!! json_encode([
+            'taskStatus' => array_map(
+                fn($e) => ['value' => $e->value, 'label' => $e->label()],
+                \App\Enums\TaskStatus::cases()
+            ),
+            'taskPriority' => array_map(
+                fn($e) => ['value' => $e->value, 'label' => $e->label()],
+                \App\Enums\TaskPriority::cases()
+            ),
+        ]) !!};
+    </script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="h-full">

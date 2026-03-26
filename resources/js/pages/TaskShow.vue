@@ -97,6 +97,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '../composables/useApi.js';
+import { TaskPriority, TaskStatus } from '../enums/task.js';
 
 const route = useRoute();
 const router = useRouter();
@@ -132,28 +133,9 @@ const isOverdue = computed(() => {
   return new Date(task.value.due_date) < new Date();
 });
 
-const statusClass = (status) => {
-  const map = {
-    todo: 'bg-gray-100 text-gray-700',
-    in_progress: 'bg-yellow-100 text-yellow-800',
-    done: 'bg-green-100 text-green-800',
-  };
-  return map[status] ?? 'bg-gray-100 text-gray-700';
-};
-
-const statusLabel = (status) => {
-  const map = { todo: 'To Do', in_progress: 'In Progress', done: 'Done' };
-  return map[status] ?? status;
-};
-
-const priorityClass = (priority) => {
-  const map = {
-    low: 'bg-blue-100 text-blue-800',
-    medium: 'bg-orange-100 text-orange-800',
-    high: 'bg-red-100 text-red-800',
-  };
-  return map[priority] ?? 'bg-gray-100 text-gray-700';
-};
+const statusClass = TaskStatus.class;
+const statusLabel = TaskStatus.label;
+const priorityClass = TaskPriority.class;
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '';
